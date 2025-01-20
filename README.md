@@ -8,9 +8,11 @@ This script is a result of combining and adapting the functionality of several o
 
 1. PowerShell 7+
 2. Azure CLI
-3. Microsoft Graph PowerShell Module
-4. ImportExcel Module (for generating reports)
-5. AADInternals Module
+3. Azure Pwoershell
+4. Microsoft Graph PowerShell Module
+5. ImportExcel Module (for generating reports)
+6. AADInternals Module
+
 
 If not installed, dont worry we got you covered in the script except PowerShell 7 :-) 
 

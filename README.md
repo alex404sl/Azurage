@@ -33,3 +33,5 @@ This tool was created and tested primarily in a Kali Linux PowerShell environmen
 **Disclaimer:**
 
 I'm not a professional coder, and you may find areas in this script that could be refined or written more efficiently. However, this script serves its purpose and has been a reliable companion in my Azure testing endeavors. Feel free to suggest improvements or adapt the script to suit your own needs!
+
+This tool is intended for educational purposes only. Unauthorized use of this script against systems without explicit prior consent from their owners is strictly prohibited and may violate local, state, and federal laws. It is the responsibility of the end-user to ensure that they are complying with all applicable legal regulations. The developers of this script assume no liability for any misuse, damage, or illegal activity resulting from its use. Use responsibly.

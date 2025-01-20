@@ -8,7 +8,7 @@ This script is a result of combining and adapting the functionality of several o
 
 1. PowerShell 7+
 2. Azure CLI
-3. Azure Pwoershell
+3. Azure Powershell
 4. Microsoft Graph PowerShell Module
 5. ImportExcel Module (for generating reports)
 6. AADInternals Module

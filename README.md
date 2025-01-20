@@ -23,7 +23,6 @@ If not installed, dont worry we got you covered in the script except PowerShell 
 6. AzureHound Ingestor
 7. Useful Commands
 8. Install required tools
-9. Exit
 
 **Compatibility**
 

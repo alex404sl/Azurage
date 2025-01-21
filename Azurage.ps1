@@ -202,52 +202,66 @@ function Check-AzureEntraID {
     Show-UnauthenticatedEnumerationMenu
 }
 
-# Function for basic checks
-function Check-AllinOne{
-    Write-Host "Gathering all the basic unauthentictaed information.."
+#Fucntion for basic check
+function Check-AllinOne {
+    Write-Host "Gathering all the basic unauthenticated information..." -ForegroundColor Cyan
     try {
-                	
-	# Query for tenant information via AutoDiscover
-	$autodiscover = Invoke-WebRequest -Uri "https://login.microsoftonline.com/getuserrealm.srf?login=user@$Global:UnauthenticatedDomain" -UseBasicParsing | ConvertFrom-Json
+        # Query for tenant information via AutoDiscover
+        $autodiscover = Invoke-WebRequest -Uri "https://login.microsoftonline.com/getuserrealm.srf?login=user@$Global:UnauthenticatedDomain" -UseBasicParsing | ConvertFrom-Json
 
-	# Azure tenant metadata endpoint
-	$metadata = Invoke-WebRequest -Uri "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration" -UseBasicParsing | ConvertFrom-Json
+        # Azure tenant metadata endpoint
+        $metadata = Invoke-WebRequest -Uri "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration" -UseBasicParsing | ConvertFrom-Json
 
-	# Query verified domains dynamically (Publicly accessible endpoint)
-	
+             # Determine tenant brand
+        $tenantBrand = if ($autodiscover.NameSpaceType -eq "Managed") { 
+            "Microsoft Managed Tenant" 
+        } else { 
+            "Federated Tenant" 
+        }
 
-	# Prepare a list of properties for display
-	$results = @(
-	    [PSCustomObject]@{ Property = "Default Domain";              Value = $Global:UnauthenticatedDomain }
-	    [PSCustomObject]@{ Property = "Tenant Type";                Value = $autodiscover.NameSpaceType }
-	    [PSCustomObject]@{ Property = "Tenant Brand";               Value = "Default Directory" }  # Simulated
-	    [PSCustomObject]@{ Property = "Tenant ID";                  Value = "2590ccef-687d-493b-ae8d-441cbab63a72" }  # Simulated
-	    [PSCustomObject]@{ Property = "SSO";                        Value = "Disabled" }  # Simulated
-	    [PSCustomObject]@{ Property = "Certificate-based Auth (CBA)"; Value = "N/A" }  # Simulated
-	    [PSCustomObject]@{ Property = "Authentication URL";         Value = $autodiscover.AuthURL }
-	    [PSCustomObject]@{ Property = "Federation Metadata URL";    Value = $autodiscover.FederationMetadataURL }
-	    [PSCustomObject]@{ Property = "STS Authentication";         Value = $autodiscover.CloudInstanceName }
-	    [PSCustomObject]@{ Property = "Authorization Endpoint";     Value = $metadata.authorization_endpoint }
-	    [PSCustomObject]@{ Property = "Token Endpoint";             Value = $metadata.token_endpoint }
-	    [PSCustomObject]@{ Property = "Issuer";                     Value = $metadata.issuer }
-	)
+        # Determine if SSO is enabled
+        $ssoStatus = if ($autodiscover.AuthURL) { 
+            "Enabled" 
+        } else { 
+            "Disabled" 
+        }
 
-# Display the results in a table
-$results | Format-Table -AutoSize
+        # Determine if Certificate-based Auth (CBA) is available
+        $cbaStatus = if ($metadata.certificate_based_authentication_supported) { 
+            "Available" 
+        } else { 
+            "N/A" 
+        }
+
+        # Prepare a list of properties for display
+        $results = @(
+            [PSCustomObject]@{ Property = "Default Domain";              Value = $Global:UnauthenticatedDomain }
+            [PSCustomObject]@{ Property = "Tenant Type";                Value = $autodiscover.NameSpaceType }
+            [PSCustomObject]@{ Property = "Tenant Brand";               Value = $tenantBrand }
+            [PSCustomObject]@{ Property = "SSO";                        Value = $ssoStatus }
+            [PSCustomObject]@{ Property = "Certificate-based Auth (CBA)"; Value = $cbaStatus }
+            [PSCustomObject]@{ Property = "Authentication URL";         Value = $autodiscover.AuthURL }
+            [PSCustomObject]@{ Property = "Federation Metadata URL";    Value = $autodiscover.FederationMetadataURL }
+            [PSCustomObject]@{ Property = "STS Authentication";         Value = $autodiscover.CloudInstanceName }
+            [PSCustomObject]@{ Property = "Authorization Endpoint";     Value = $metadata.authorization_endpoint }
+            [PSCustomObject]@{ Property = "Token Endpoint";             Value = $metadata.token_endpoint }
+            [PSCustomObject]@{ Property = "Issuer";                     Value = $metadata.issuer }
+        )
+
+        # Display the results in a table
+        $results | Format-Table -AutoSize
+
+    } catch {
+        Write-Host "An error occurred while fetching the tenant information: $_" -ForegroundColor Red
+    }
 
 # Display verified domains below the table
-Write-Host "`nVerified Domains:" -ForegroundColor Cyan
-Get-TenantDomainNames
-
-        
-        
-        
-    } catch {
-        Write-Host "Error during subdomain enumeration: $($_.Exception.Message)"
-    }
+	Get-TenantDomainNames
+	  	
+	 Start-Sleep -Seconds 3
+    # Go back to the main menu
     Show-UnauthenticatedEnumerationMenu
 }
-
 
 # Authenticated Enumeration
 function Perform-AuthenticatedEnumeration {

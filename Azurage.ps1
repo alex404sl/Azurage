@@ -35,7 +35,7 @@ function Process-MainMenuChoice {
         "5" { Run-GraphRunnerLoot }
         "6" { Run-AzureHoundIngestor }
         "7" { Show-OtherCommandsMenu }
-        "7" { Install-RequiredTools }
+        "8" { Install-RequiredTools }
         "9" { Write-Host "Exiting... Thank you for using the tool!" -ForegroundColor Green; Exit }
         default { Write-Host "Invalid choice! Please select a valid option." -ForegroundColor Red; Start-Sleep -Seconds 2; Show-MainMenu }
     }
